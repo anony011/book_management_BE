@@ -9,10 +9,10 @@ CORS(app)
 
 # Konfigurasi MySQL
 db = pymysql.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="flask_book_management"
+    host=os.getenv('HOST'),
+    user=os.getenv('USER'),
+    password=os.getenv('PASSWORD'),
+    database=os.getenv('DATABASE')
 )
 
 @app.route('/login', methods=['POST'])
