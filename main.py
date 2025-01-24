@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import pymysql
+import mysql.connector
 import os
 from werkzeug.security import check_password_hash
 
@@ -8,11 +8,11 @@ app = Flask(__name__)
 CORS(app)
 
 # Konfigurasi MySQL
-db = pymysql.connect(
-    host=os.getenv('HOST'),
-    user=os.getenv('USER'),
-    password=os.getenv('PASSWORD'),
-    database=os.getenv('DATA_BASE_NAME')
+db = mysql.connector.connect(
+    host=os.getenv('DB_HOST'),
+    user=os.getenv('DB_USER'),
+    password=os.getenv('DB_PASSWORD'),
+    database=os.getenv('DB_NAME')
 )
 
 @app.route('/login', methods=['POST'])
@@ -22,7 +22,7 @@ def login():
     password = data.get('password')
 
     # Periksa user di database
-    cursor = db.cursor(pymysql.cursors.DictCursor)
+    cursor = db.cursor(dictionary=True)
     cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
     user = cursor.fetchone()
     cursor.close()
@@ -39,7 +39,7 @@ def logout():
 
 @app.route('/books', methods=['GET'])
 def get_books():
-    cursor = db.cursor(pymysql.cursors.DictCursor)
+    cursor = db.cursor(dictionary=True)
     cursor.execute("SELECT * FROM books")
     books = cursor.fetchall()
     cursor.close()
@@ -82,4 +82,4 @@ def update_book(book_id):
     return jsonify({"message": "Book updated successfully"})
 
 if __name__ == '__main__':
-    app.run(host=os.getenv('FLASK_RUN_HOST'), port=os.gotenv('FLASK_RUN_PORT'))
+    app.run(host=os.getenv('FLASK_RUN_HOST'), port=os.getenv('FLASK_RUN_PORT'))
