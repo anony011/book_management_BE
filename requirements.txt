@@ -5,3 +5,4 @@ importlib_metadata
 mysql-connector-python
 python-dotenv
 Werkzeug
+gunicorn
