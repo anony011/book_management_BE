@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import pymysql
 import os
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
 CORS(app)
@@ -62,7 +62,7 @@ def add_book():
 @app.route('/books/<int:book_id>', methods=['DELETE'])
 def delete_book(book_id):
     cursor = db.cursor()
-    cursor.execute("DELETE FROM books WHERE id = %s", (book_id,))
+    cursor.execute("DELETE FROM books WHERE book_id = %s", (book_id,))
     db.commit()
     cursor.close()
     return jsonify({"message": "Book deleted successfully"})
@@ -75,7 +75,7 @@ def update_book(book_id):
     year = data['year']
 
     cursor = db.cursor()
-    cursor.execute("UPDATE books SET title = %s, author = %s, year = %s WHERE id = %s",
+    cursor.execute("UPDATE books SET title = %s, author = %s, year = %s WHERE book_id = %s",
                    (title, author, year, book_id))
     db.commit()
     cursor.close()
