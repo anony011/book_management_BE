@@ -12,7 +12,7 @@ db = pymysql.connect(
     host=os.getenv('HOST'),
     user=os.getenv('USER'),
     password=os.getenv('PASSWORD'),
-    database=os.getenv('DATABASE')
+    database=os.getenv('DATA_BASE_NAME')
 )
 
 @app.route('/login', methods=['POST'])
@@ -51,9 +51,10 @@ def add_book():
     title = data['title']
     author = data['author']
     year = data['year']
+    userid = 1
 
     cursor = db.cursor()
-    cursor.execute("INSERT INTO books (title, author, year) VALUES (%s, %s, %s)", (title, author, year))
+    cursor.execute("INSERT INTO books (title, author, year, user_id) VALUES (%s, %s, %s, %s)", (title, author, year, userid))
     db.commit()
     cursor.close()
     return jsonify({"message": "Book added successfully"}), 201
