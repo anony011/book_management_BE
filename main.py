@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import pymysql
-import os 
+import os
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 CORS(app)
@@ -13,6 +14,28 @@ db = pymysql.connect(
     password="",
     database="flask_book_management"
 )
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    # Periksa user di database
+    cursor = db.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+    user = cursor.fetchone()
+    cursor.close()
+
+    if not user or not check_password_hash(user['password'], password):
+        return jsonify({"message": "Invalid username or password!"}), 401
+
+    # Kembalikan informasi pengguna
+    return jsonify(user)
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    return jsonify({"message": "Logged out successfully!"})
 
 @app.route('/books', methods=['GET'])
 def get_books():
